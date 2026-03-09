@@ -1,0 +1,10 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: p21a-postgres
+    environment:
+      POSTGRES_DB: edudb
+      POSTGRES_USER: edu
+      POSTGRES_PASSWORD: edu4edu
+    ports:
+      - "5432:5432"
