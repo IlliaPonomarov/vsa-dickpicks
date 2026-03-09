@@ -5,13 +5,13 @@
  */
 package entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -24,19 +24,39 @@ public class Person implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Long id;   
 
+    @Column(name = "name")
     private String name;
+    @Column(name = "salary")
     private double salary;
-    @Temporal(TemporalType.DATE)
-    private Date born;
+    
+    @Column(name = "born")
+    private LocalDate born;
+    
+    @Column(name = "married", columnDefinition = "BOOLEAN")
     private boolean married;
+    
+    public Person() {
+        
+    }
+    
+    public Person(
+      final String name,
+      final LocalDate born,
+      final boolean married
+    ) {
+        this.name = name;
+        this.born = born;
+        this.married = married;
+    }
 
-    public Date getBorn() {
+    public LocalDate getBorn() {
         return born;
     }
 
-    public void setBorn(Date born) {
+    public void setBorn(LocalDate born) {
         this.born = born;
     }
 
@@ -94,7 +114,7 @@ public class Person implements Serializable {
 
     @Override
     public String toString() {
-        return "Person{" + "id=" + id + ", name=" + name + ", salary=" + salary + '}';
+        return "Person{" + "id=" + id + ", name=" + name + ", salary=" + salary + ", born=" + born.toString() + '}';
     }
 
 }
