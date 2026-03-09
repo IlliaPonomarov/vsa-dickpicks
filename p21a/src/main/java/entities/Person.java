@@ -23,7 +23,6 @@ public class Person implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;   
 
@@ -114,7 +113,7 @@ public class Person implements Serializable {
 
     @Override
     public String toString() {
-        return "Person{" + "id=" + id + ", name=" + name + ", salary=" + salary + ", born=" + born.toString() + '}';
+        return "Person{" + "id=" + id + ", name=" + name + ", salary=" + salary + ", born=" + born + '}';
     }
 
 }

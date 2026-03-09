@@ -12,6 +12,7 @@ import jakarta.persistence.Persistence;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -34,9 +35,11 @@ public class NewMain {
         persist(p);
         System.out.println("" + p.getId());
         
-        final var existPerson = findById(p.getId()).get();
+        findByAll().forEach(val -> {
+           System.out.println(val);
+        });
         
-        System.out.println("Person:" + existPerson);
+        //System.out.println("Person:" + existPerson);
     }
     
     
@@ -48,6 +51,29 @@ public class NewMain {
         return calendar.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
+    }
+    
+    
+     private static List<Person> findByAll() {
+        final var emf = Persistence.createEntityManagerFactory(ENTITY_MANAGER_NAME);
+        final var em = emf.createEntityManager();
+        
+        em.getTransaction().begin();
+        
+        try {
+            final var persons = em.createQuery("SELECT p FROM Person p", Person.class).getResultList();
+      
+        
+            em.getTransaction().commit();
+            return persons;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            em.getTransaction().rollback();
+        } finally {
+            em.close();
+        }
+        
+        return List.of();
     }
     
     private static Optional<Person> findById(final Long id) {
