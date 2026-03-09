@@ -30,6 +30,7 @@ public class NewMain {
                 toLocalDate(2002, 2, 2),
                 true
         );
+        p.setId(1283L);
         persist(p);
         System.out.println("" + p.getId());
         
