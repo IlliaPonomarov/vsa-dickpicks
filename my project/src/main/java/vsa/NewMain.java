@@ -10,7 +10,9 @@ import entities.Person;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import jakarta.persistence.TypedQuery;
 import java.util.Date;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -20,6 +22,45 @@ public class NewMain {
 
     // Ilustruje generovany kluc
     public static void main(String[] args) {
+        var emr = Persistence.createEntityManagerFactory("vsaPU");
+        var em = emr.createEntityManager();
+        
+        IntStream.range(0, 100).forEach(i -> {
+                    final var osoba = new Osoba();
+                    final var id = Long.valueOf(39000 + i);
+                    final var plat = Long.valueOf(800 + i);
+                    osoba.setId(id);
+                    osoba.setMeno("Illia");
+                    osoba.setPlat(plat);
+                    osoba.setNarodeny(new Date());
+                    osoba.setZenaty(false);
+                    persist(osoba, em);          
+        });
+        
+        // Retrive all Osobs
+        final TypedQuery<Osoba> allOsobs = em.createNamedQuery("Osoba.findAll", Osoba.class);
+        
+        allOsobs.getResultStream().forEach(p -> {
+                    final var newOsoba = p;
+                    newOsoba.setPlat(newOsoba.getPlat() + 100);
+                    persist(newOsoba, em);          
+        });
+        
+        final TypedQuery<Osoba> allOsobsLowerThenNSalaryQuery = em.createNamedQuery("Osoba.findBySalary", Osoba.class);
+        allOsobsLowerThenNSalaryQuery.setParameter("plat", 1000.0);
+        allOsobsLowerThenNSalaryQuery.getResultStream().forEach(System.out::println);
+        
+        final TypedQuery<Double> sumOfSalary = em.createNamedQuery("Osoba.salarySum", Double.class);
+        final var sumOfAllSalaries = sumOfSalary.getSingleResult();
+        
+        System.out.println("Sum of all salaries of osobs: " + sumOfAllSalaries);
+        
+        em.close();
+    }
+    
+    
+    
+    public static void cv25() {
         var emr = Persistence.createEntityManagerFactory("vsaPU");
         var em = emr.createEntityManager();
         final var osoba = new Osoba();
@@ -47,8 +88,6 @@ public class NewMain {
         
         System.out.println("Osoba: " + exOsoba );
         System.out.println("Person: " + person );
-
-//        removeFero(id);
     }
 
     // ilustracia clear a detach
@@ -75,66 +114,15 @@ public class NewMain {
         em.close();
         return id;
     }
-    
-    // ilustruje refresh
-    public static void refreshFero(long id) {
-
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("vsaPU");
-        EntityManager em = emf.createEntityManager();
-
-        Person p = em.find(Person.class, id);      
-        System.out.println("" + p.getName() + " " + p.getSalary());
-
-        p.setSalary(3000.0);
-        System.out.println("" + p.getName() + " " + p.getSalary());
-
-        em.refresh(p);
-        System.out.println("" + p.getName() + " " + p.getSalary());
-
-        em.close();
-    }
-
-    // ilustruje merge
-    public static void mergeFero(long id) {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("vsaPU");
-        EntityManager em = emf.createEntityManager();
+     
+    private static void persist(final Osoba osoba, final EntityManager em) {
         
-        // vytvorim kopiu
-        Person p = new Person();
-        p.setId(id);
-        p.setName("Fero");
-        // plat zmenim
-        p.setSalary(333.33);
-
-        // persist vyvola unique key violation
-//        em.getTransaction().begin();
-//        em.persist(p2);
-//        em.getTransaction().commit();
-//        System.out.println(p2);
-        
-        // merge
-        em.getTransaction().begin();
-        Person p2 = em.merge(p);
-        em.getTransaction().commit();
-        System.out.println(p2);
-        
-        System.out.println("p == p2 :     " + (p == p2));
-
-        em.close();
-    }
-
-    // ilustruje getreference a remove
-    // zapnite sql-log a pozrite rozdiel medzi find a getReference
-    public static void removeFero(long id) {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("vsaPU");
-        EntityManager em = emf.createEntityManager();
-        
-        // nemusi inicializovat vsetky datove cleny 
-        Person p = em.getReference(Person.class, id);
-        em.getTransaction().begin();
-        em.remove(p);
-        em.getTransaction().commit();
-
-        em.close();
+        try{
+            em.getTransaction().begin();
+            em.persist(osoba);
+            em.getTransaction().commit();
+        } catch(Exception ex) {
+            em.getTransaction().rollback();
+        }   
     }
 }

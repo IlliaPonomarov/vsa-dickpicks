@@ -7,6 +7,8 @@ package entities;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import java.util.Date;
 import java.util.Objects;
@@ -17,6 +19,12 @@ import java.util.Objects;
  */
 @Table(name = "Person")
 @Entity
+@NamedQueries({
+    @NamedQuery(name = "Osoba.findAll", query = "SELECT o FROM Osoba o"),
+    @NamedQuery(name = "Osoba.findBySalary", query = "SELECT o FROM Osoba o WHERE o.plat < :plat"),
+    @NamedQuery(name = "Osoba.salarySum", query = "SELECT SUM(o.plat) FROM Osoba o"),
+
+})
 public class Osoba {
     @Id
     private Long id;
