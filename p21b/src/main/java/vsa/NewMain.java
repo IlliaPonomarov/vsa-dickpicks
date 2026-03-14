@@ -18,7 +18,7 @@ public class NewMain {
 
     // Ilustruje generovany kluc
     public static void main(String[] args) {
-        verzia1();
+        verzia2();
 //        verzia2();
     }
 
@@ -50,7 +50,8 @@ public class NewMain {
     public static void verzia2() {
         Person p;
         p = new Person();
-        p.setName("Fero");
+        p.setName("Ferojhgk");
+       
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("vsaPU");
         EntityManager em = emf.createEntityManager();
@@ -66,9 +67,24 @@ public class NewMain {
 
         em = emf.createEntityManager();
         Person p2 = em.find(Person.class, id);
+        final var id2 = p2.getId();
+        
+        p2.setSalary(3300.0);
+       // em.getTransaction().begin();
+        p2.setSalary(2200.0);
+       // em.getTransaction().commit();
+        
+        em.close();
+        em = Persistence.createEntityManagerFactory("vsaPU").createEntityManager();
+        
+        p = em.find(Person.class, id);
+        p2= em.find(Person.class, id2);
+        
         System.out.println("p == p2 :     " + (p == p2));
         System.out.println("p.equals(p2): " + p.equals(p2));
-                
+        System.out.println(p);
+        System.out.println(p2);
+
         em.close();
     }
 }
