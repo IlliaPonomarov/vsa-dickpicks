@@ -9,7 +9,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -23,6 +26,9 @@ public class Osoba implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;    
     private String meno;
+    
+    @ManyToMany(mappedBy = "autori")
+    private List<Kniha> knihas;
 
     public String getMeno() {
         return meno;
@@ -40,29 +46,49 @@ public class Osoba implements Serializable {
         this.id = id;
     }
 
+    public List<Kniha> getKnihas() {
+        return knihas;
+    }
+
+    public void setKnihas(List<Kniha> knihas) {
+        this.knihas = knihas;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        int hash = 5;
+        hash = 29 * hash + Objects.hashCode(this.id);
+        hash = 29 * hash + Objects.hashCode(this.meno);
+        hash = 29 * hash + Objects.hashCode(this.knihas);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Osoba)) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-        Osoba other = (Osoba) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
-        return true;
+        final Osoba other = (Osoba) obj;
+        if (!Objects.equals(this.meno, other.meno)) {
+            return false;
+        }
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return Objects.equals(this.knihas, other.knihas);
     }
 
     @Override
     public String toString() {
-        return "p4app2.Osoba[ id=" + id + " ]";
+        return "Osoba{" + "id=" + id + ", meno=" + meno + ", knihas=" + knihas + '}';
     }
+
+    
     
 }

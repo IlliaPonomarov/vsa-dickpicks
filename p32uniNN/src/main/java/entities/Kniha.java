@@ -9,6 +9,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import java.io.Serializable;
 import java.util.List;
 
@@ -17,6 +22,9 @@ import java.util.List;
  * @author igor
  */
 @Entity
+@NamedQueries({
+  @NamedQuery(name = "Kniha.findAll", query = "SELECT k FROM Kniha k")
+})
 public class Kniha implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -25,6 +33,13 @@ public class Kniha implements Serializable {
     private Long id;
 
     private String nazov;
+    
+    @ManyToMany
+    @JoinTable(
+      name = "knihaautor",
+      joinColumns = @JoinColumn(name = "kniha_id"),
+      inverseJoinColumns = @JoinColumn(name = "osoba_id")
+    )
     private List<Osoba> autori;
 
     public String getNazov() {

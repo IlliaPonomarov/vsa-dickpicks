@@ -17,9 +17,9 @@ import java.util.ArrayList;
  * @author edu
  */
 public class NewMain {
-
-    public static void main(String[] args) {
-        Osoba autor1 = new Osoba();
+    
+    static {
+         Osoba autor1 = new Osoba();
         autor1.setMeno("Kernighan");
         Osoba autor2 = new Osoba();
         autor2.setMeno("Ritchey");
@@ -45,6 +45,27 @@ public class NewMain {
         } finally {
             em.close();
         }
+
+    }
+
+    public static void main(String[] args) {
+         final var emr = Persistence.createEntityManagerFactory("vsaPU");
+         final var em = emr.createEntityManager();
+         
+         final var knihasQuery = em.createNamedQuery("Kniha.findAll", Kniha.class);
+         
+         knihasQuery.getResultStream().forEach(k -> {
+         
+             System.out.println("Kniha id: " + k.getId());
+             
+             k.getAutori().stream().forEach(System.out::println);
+        
+             System.out.println("--------------------------------------");
+         });
+         
+         
+         
+         em.close();
     }
 
     public static void persist(Object object) {
